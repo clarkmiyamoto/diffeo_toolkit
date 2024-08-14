@@ -22,6 +22,9 @@ if __name__ == '__main__':
     '''
     Generates g and g^{-1} with a given diffeo strength
     Saves results into '{filename}_grid.pt' and '{filename}_gridInverse.pt
+
+    Example usage (in terminal):
+    python generate_diffeo.py --img-xlength=224 --img-ylength=224 --diffeo-strengths=0.1 0.5 --diffeo-num=100
     '''
 
     ### Parse arguments
@@ -46,8 +49,8 @@ if __name__ == '__main__':
 
     ### CODE
     # Torch parameters
-    device = t.device("cuda") if t.cuda.is_available() else t.device("cpu")
-    print(f'Using device: {device}')
+    device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+    print(f"Using device: {device}")
 
     # Generate diffeos (g)
     SparseDiffeoContinaer = sparse_diffeo_container(XLENGTH, 
