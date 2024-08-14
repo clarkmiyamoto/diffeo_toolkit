@@ -1,7 +1,10 @@
 from diffeo_toolkit.diffeo.diffeo_container import diffeo_container, sparse_diffeo_container
 
-import argparse
+import torch
+
 from datetime import datetime
+import argparse
+import json
 
 
 def parse():
@@ -53,25 +56,25 @@ if __name__ == '__main__':
     print(f"Using device: {device}")
 
     # Generate diffeos (g)
-    SparseDiffeoContinaer = sparse_diffeo_container(XLENGTH, 
+    SparseDiffeoContainer = sparse_diffeo_container(XLENGTH, 
                                                     YLENGTH, 
                                                     device=device)
     for strength in DIFFEO_STRENGTHS:
-        SparseDiffeoContinaer.sparse_AB_append(x_cutoff=DIFFEO_XCUT, 
+        SparseDiffeoContainer.sparse_AB_append(x_cutoff=DIFFEO_XCUT, 
                                                y_cutoff=4, 
                                                num_of_terms=DIFFEO_YCUT, 
                                                diffeo_amp=strength,
                                                num_of_diffeo=DIFFEO_NUM)
-    SparseDiffeoContinaer.get_all_grid()
-    SparseDiffeoContinaer.to(device)
+    SparseDiffeoContainer.get_all_grid()
+    SparseDiffeoContainer.to(device)
 
     # Get grid samples
-    grid_sample = torch.cat(SparseDiffeoContinaer.diffeos)
-    grid_sample_inverse = torch.cat(SparseDiffeoContinaer.get_inverse_grid(mode='bilinear', align_corners=True).diffeos)
+    grid_sample = torch.cat(SparseDiffeoContainer.diffeos)
+    grid_sample_inverse = torch.cat(SparseDiffeoContainer.get_inverse_grid(mode='bilinear', align_corners=True).diffeos)
 
     # Save files
     torch.save(grid_sample, filename + '_grid.pt')
-    torch.save(grid_sample_inverse, file + '_gridInverse.pt')
+    torch.save(grid_sample_inverse, filename + '_gridInverse.pt')
 
     with open(filename + '_args.json', 'w') as json_file:
         json.dump(args_dict, json_file, indent=4)
